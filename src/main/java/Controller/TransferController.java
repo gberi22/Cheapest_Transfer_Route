@@ -2,49 +2,41 @@ package Controller;
 
 import Model.RouteResult;
 import Model.Transfer;
-import Repository.TransferRepository;
+import Model.TransferRequest;
 import Service.TransferService;
+import Service.saveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/transfers")
 public class TransferController {
 
     private final TransferService transferService;
-    private final TransferRepository transferRepository;
+    private final saveService saveServices;
 
     @Autowired
-    public TransferController(TransferService transferService, TransferRepository transferRepository) {
+    public TransferController(TransferService transferService, saveService saveServices) {
         this.transferService = transferService;
-        this.transferRepository = transferRepository;
+        this.saveServices = saveServices;
     }
 
-    @GetMapping("/history")
-    public ResponseEntity<List<Transfer>> getEveryTransfer() {
-        return ResponseEntity.ok(transferRepository.findEveryTransfer());
+    @GetMapping("/getRoute")
+    public ResponseEntity<RouteResult> getMaximizedCostRoute() {
+        return ResponseEntity.ok(transferService.getShortestRoute());
     }
 
-    @PostMapping
-    public ResponseEntity<Void> createTransfer(@RequestBody Transfer transfer) {
-        transferRepository.addTransfer(transfer);
+    @PostMapping("/inputRoutes")
+    public ResponseEntity<Void> chosenRoute(@RequestBody TransferRequest request) {
+        System.out.println(request.getMaxWeight());
+        for(Transfer tr: request.getSelectedTransfers()){
+            System.out.println(tr.getCost());
+            System.out.println(tr.getWeight());
+        }
+        saveServices.saveServices(request);
         return ResponseEntity.ok().build();
     }
-
-    @PostMapping("/chosen_route")
-    public ResponseEntity<RouteResult> chosenRoute(@RequestBody int maxWeight, @RequestBody List<Transfer> transfers) {
-        return ResponseEntity.ok(transferService.findMaximizedCostRoute(maxWeight, transfers));
-    }
-
-
-//    @DeleteMapping
-//    public ResponseEntity<Void> deleteTransfer(@RequestBody Transfer transfer) {
-//        transferRepository.clearTransfers();
-//        return ResponseEntity.ok().build();
-//    }
-
 
 }

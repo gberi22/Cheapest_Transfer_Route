@@ -2,17 +2,31 @@ package Service;
 
 import Model.RouteResult;
 import Model.Transfer;
+import Repository.TransferRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.util.RouteMatcher;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class TransferServiceImpl implements TransferService {
 
+
+    private final TransferRepository transferRepository;
+
+    public TransferServiceImpl(TransferRepository transferRepository) {
+        this.transferRepository = transferRepository;
+    }
+
     @Override
+    public RouteResult getShortestRoute() {
+        List<Transfer> list = transferRepository.getTransfers();
+        int maxWeight = transferRepository.getMaxWeight();
+        return findMaximizedCostRoute(maxWeight, list);
+    }
+
+
+
     /**
      * This logic requires dp algorithm. dp array tracks maximum cost for each weight from 0 to maxWeight
      * 1. We must consider each Transfer one by one
@@ -50,4 +64,5 @@ public class TransferServiceImpl implements TransferService {
 
         return new RouteResult(selectedTransfers, totalCost, totalWeight);
     }
+
 }
