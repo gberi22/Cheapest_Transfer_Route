@@ -1,8 +1,7 @@
-package Repository;
+package com.example.cheapesttransferroute.Repository;
 
-import Model.Transfer;
+import com.example.cheapesttransferroute.Model.Transfer;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

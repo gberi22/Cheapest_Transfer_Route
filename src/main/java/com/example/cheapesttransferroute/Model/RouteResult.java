@@ -1,4 +1,4 @@
-package Model;
+package com.example.cheapesttransferroute.Model;
 
 import lombok.*;
 

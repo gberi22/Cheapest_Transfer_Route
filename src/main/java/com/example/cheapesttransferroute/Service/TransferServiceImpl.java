@@ -1,11 +1,12 @@
-package Service;
+package com.example.cheapesttransferroute.Service;
 
-import Model.RouteResult;
-import Model.Transfer;
-import Repository.TransferRepository;
+import com.example.cheapesttransferroute.Model.RouteResult;
+import com.example.cheapesttransferroute.Model.Transfer;
+import com.example.cheapesttransferroute.Repository.TransferRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -25,8 +26,6 @@ public class TransferServiceImpl implements TransferService {
         return findMaximizedCostRoute(maxWeight, list);
     }
 
-
-
     /**
      * This logic requires dp algorithm. dp array tracks maximum cost for each weight from 0 to maxWeight
      * 1. We must consider each Transfer one by one
@@ -37,30 +36,37 @@ public class TransferServiceImpl implements TransferService {
      * 6. When I find the route weight is easily computable
      */
     public RouteResult findMaximizedCostRoute(int maxWeight, List<Transfer> allTransfers) {
-        List<Transfer> selectedTransfers = new ArrayList<Transfer>();
+        int quantityOfTransfers = allTransfers.size();
+        int[][] dp_array = new int[quantityOfTransfers + 1][maxWeight + 1];
+
+        for (int i = 1; i <= quantityOfTransfers; i++) {
+            Transfer transfer = allTransfers.get(i - 1);
+            for (int w = 0; w <= maxWeight; w++) {
+                if (transfer.getWeight() <= w) {
+                    dp_array[i][w] = Math.max(dp_array[i - 1][w],
+                            dp_array[i - 1][w - transfer.getWeight()] + transfer.getCost());
+                } else {
+                    dp_array[i][w] = dp_array[i - 1][w];
+                }
+            }
+        }
+
+        List<Transfer> selectedTransfers = new ArrayList<>();
         int totalWeight = 0;
         int totalCost = 0;
+        int w = maxWeight;
 
-        int quantityOfTransfers = allTransfers.size();
-        int [][]dp_array = new int[quantityOfTransfers+1][maxWeight+1];
-
-        for(int eachTransfer=1; eachTransfer<=quantityOfTransfers; eachTransfer++) {
-            Transfer transfer = allTransfers.get(eachTransfer-1);
-            for (int eachWeight = maxWeight; eachWeight >= transfer.getWeight(); eachWeight--) {
-                dp_array[eachTransfer][eachWeight] = Math.max(dp_array[eachTransfer-1][eachWeight],
-                        dp_array[eachTransfer-1][eachWeight - transfer.getWeight()] + transfer.getCost());
-            }
-        }
-
-        for(int i=quantityOfTransfers; i>0; i--) {
-            if (maxWeight <= 0) break;
-            if(dp_array[i][maxWeight] != dp_array[i-1][maxWeight]) {
-                Transfer transfer = new Transfer(dp_array[i][maxWeight], maxWeight);
+        for (int i = quantityOfTransfers; i > 0 && w > 0; i--) {
+            if (dp_array[i][w] != dp_array[i - 1][w]) {
+                Transfer transfer = allTransfers.get(i - 1);
                 selectedTransfers.add(transfer);
                 totalWeight += transfer.getWeight();
-                maxWeight -= transfer.getWeight();
+                totalCost += transfer.getCost();
+                w -= transfer.getWeight();
             }
         }
+
+        Collections.reverse(selectedTransfers);
 
         return new RouteResult(selectedTransfers, totalCost, totalWeight);
     }

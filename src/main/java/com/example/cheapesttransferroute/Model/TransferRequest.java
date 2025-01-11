@@ -1,4 +1,4 @@
-package Model;
+package com.example.cheapesttransferroute.Model;
 
 import lombok.*;
 
@@ -11,5 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 public class TransferRequest {
     private int maxWeight;
-    private List<Transfer> selectedTransfers;
+    private List<Transfer> availableTransfers;
 }
