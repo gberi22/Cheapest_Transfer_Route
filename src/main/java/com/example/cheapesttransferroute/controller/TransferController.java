@@ -34,7 +34,7 @@ public class TransferController {
             logger.error("Error: There is no available transfers given");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.ok(transferService.getShortestRoute());
+        return ResponseEntity.ok(transferService.getMaximizedCostRoute());
     }
 
     @PostMapping("/inputRoutes")

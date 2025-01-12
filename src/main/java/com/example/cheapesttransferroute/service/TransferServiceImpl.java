@@ -20,7 +20,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public RouteResult getShortestRoute() {
+    public RouteResult getMaximizedCostRoute() {
         List<Transfer> list = transferRepository.getTransfers();
         int maxWeight = transferRepository.getMaxWeight();
         return findMaximizedCostRoute(maxWeight, list);
@@ -35,7 +35,7 @@ public class TransferServiceImpl implements TransferService {
      * 5. Backtracking to find out which transfers were chosen.
      * 6. When I find the route weight is easily computable
      */
-    public RouteResult findMaximizedCostRoute(int maxWeight, List<Transfer> allTransfers) {
+    private RouteResult findMaximizedCostRoute(int maxWeight, List<Transfer> allTransfers) {
         int quantityOfTransfers = allTransfers.size();
         int [][]dp_array = new int[quantityOfTransfers + 1][maxWeight + 1];
 
@@ -56,7 +56,7 @@ public class TransferServiceImpl implements TransferService {
         int totalCost = 0;
         int w = maxWeight;
 
-        for (int i = quantityOfTransfers; i > 0 && w > 0; i--) {
+        for (int i = quantityOfTransfers; i > 0 && w >= 0; i--) {
             if (dp_array[i][w] != dp_array[i - 1][w]) {
                 Transfer transfer = allTransfers.get(i - 1);
                 selectedTransfers.add(transfer);

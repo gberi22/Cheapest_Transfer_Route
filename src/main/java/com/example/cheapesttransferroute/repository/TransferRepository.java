@@ -22,7 +22,8 @@ public class TransferRepository {
         this.maxWeight = maxWeight;
     }
 
-    public void clearTransfers() {
+    public void clearRepositoryInformation() {
         transfers.clear();
+        this.maxWeight = 0;
     }
 }

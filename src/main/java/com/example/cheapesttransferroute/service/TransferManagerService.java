@@ -20,7 +20,7 @@ public class TransferManagerService {
     }
 
     public void prepareService() {
-        transferRepository.clearTransfers();
+        transferRepository.clearRepositoryInformation();
     }
 
     public boolean isAvailableTransfersEmpty(){
