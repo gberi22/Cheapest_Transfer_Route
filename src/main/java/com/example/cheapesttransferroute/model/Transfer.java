@@ -1,8 +1,6 @@
-package com.example.cheapesttransferroute.Model;
+package com.example.cheapesttransferroute.model;
 
 import lombok.*;
-
-import java.beans.ConstructorProperties;
 
 @Data
 @Getter

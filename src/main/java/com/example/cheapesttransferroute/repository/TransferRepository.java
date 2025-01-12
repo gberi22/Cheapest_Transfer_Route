@@ -1,6 +1,6 @@
-package com.example.cheapesttransferroute.Repository;
+package com.example.cheapesttransferroute.repository;
 
-import com.example.cheapesttransferroute.Model.Transfer;
+import com.example.cheapesttransferroute.model.Transfer;
 import lombok.Getter;
 import org.springframework.stereotype.Repository;
 
@@ -20,5 +20,9 @@ public class TransferRepository {
 
     public void addMaxWeight(int maxWeight) {
         this.maxWeight = maxWeight;
+    }
+
+    public void clearTransfers() {
+        transfers.clear();
     }
 }

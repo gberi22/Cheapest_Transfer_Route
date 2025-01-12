@@ -1,12 +1,13 @@
-package com.example.cheapesttransferroute.Controller;
+package com.example.cheapesttransferroute.controller;
 
-import com.example.cheapesttransferroute.Model.RouteResult;
-import com.example.cheapesttransferroute.Model.TransferRequest;
-import com.example.cheapesttransferroute.Service.TransferService;
-import com.example.cheapesttransferroute.Service.TransferManagerService;
+import com.example.cheapesttransferroute.model.RouteResult;
+import com.example.cheapesttransferroute.model.TransferRequest;
+import com.example.cheapesttransferroute.service.TransferService;
+import com.example.cheapesttransferroute.service.TransferManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,13 +30,18 @@ public class TransferController {
     @GetMapping("/getRoute")
     public ResponseEntity<RouteResult> getMaximizedCostRoute() {
         logger.info("GET request received at /api/transfers/getRoute");
+        if (transferManagerService.isAvailableTransfersEmpty()){
+            logger.error("Error: There is no available transfers given");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
         return ResponseEntity.ok(transferService.getShortestRoute());
     }
 
     @PostMapping("/inputRoutes")
     public ResponseEntity<Void> chosenRoute(@RequestBody TransferRequest request) {
         logger.info("POST request received at /api/transfers/inputRoutes");
-        transferManagerService.ManageService(request);
+        transferManagerService.prepareService();
+        transferManagerService.manageService(request);
         return ResponseEntity.ok().build();
     }
 }

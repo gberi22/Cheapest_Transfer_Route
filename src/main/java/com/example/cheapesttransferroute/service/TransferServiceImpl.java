@@ -1,8 +1,8 @@
-package com.example.cheapesttransferroute.Service;
+package com.example.cheapesttransferroute.service;
 
-import com.example.cheapesttransferroute.Model.RouteResult;
-import com.example.cheapesttransferroute.Model.Transfer;
-import com.example.cheapesttransferroute.Repository.TransferRepository;
+import com.example.cheapesttransferroute.model.RouteResult;
+import com.example.cheapesttransferroute.model.Transfer;
+import com.example.cheapesttransferroute.repository.TransferRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class TransferServiceImpl implements TransferService {
      */
     public RouteResult findMaximizedCostRoute(int maxWeight, List<Transfer> allTransfers) {
         int quantityOfTransfers = allTransfers.size();
-        int[][] dp_array = new int[quantityOfTransfers + 1][maxWeight + 1];
+        int [][]dp_array = new int[quantityOfTransfers + 1][maxWeight + 1];
 
         for (int i = 1; i <= quantityOfTransfers; i++) {
             Transfer transfer = allTransfers.get(i - 1);
