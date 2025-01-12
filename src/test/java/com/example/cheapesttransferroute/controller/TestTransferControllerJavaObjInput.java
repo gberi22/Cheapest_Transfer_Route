@@ -2,7 +2,6 @@ package com.example.cheapesttransferroute.controller;
 
 import com.example.cheapesttransferroute.model.Transfer;
 import com.example.cheapesttransferroute.model.TransferRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.awt.*;
 import java.util.Arrays;
 
 import static java.util.Collections.emptyList;
@@ -21,17 +19,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TestTransferController {
-    @Autowired
-    private MockMvc mvc;
+public class TestTransferControllerJavaObjInput {
 
     @Autowired
     private ObjectMapper objectMapper;
+
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void testChosenRouteBuild() throws Exception {
+    public void testChosenRouteDefault() throws Exception {
         TransferRequest request = new TransferRequest(15, Arrays.asList
             (
                 new Transfer(12, 53),
@@ -47,24 +44,14 @@ public class TestTransferController {
     }
 
     @Test
-    public void testChosenRoute_EmptyTransfers() throws Exception {
-        TransferRequest request = new TransferRequest(15, emptyList());
-        mockMvc.perform(post("/api/transfers/inputRoutes")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk());
-    }
-
-    @Test
-    public void testGetMaximizedCostRoute_NoTransfers() throws Exception {
+    public void testGetMaximizedCostRouteNoTransfers() throws Exception {
         mockMvc.perform(get("/api/transfers/getRoute"))
             .andExpect(status().isNotFound())
             .andExpect(content().string(""));
     }
 
-
     @Test
-    public void testGetMaximizedCostRoute_Default() throws Exception {
+    public void testGetMaximizedCostRouteDefault() throws Exception {
         TransferRequest request = new TransferRequest(15, Arrays.asList
             (
                 new Transfer(5, 10),
@@ -88,11 +75,31 @@ public class TestTransferController {
         );
     }
 
+    @Test
+    public void testChosenRouteEmptyTransfers() throws Exception {
+        TransferRequest request = new TransferRequest(15, emptyList());
+        mockMvc.perform(post("/api/transfers/inputRoutes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.availableTransfers").value("Available transfers list cannot be empty"));
+    }
 
-//    @Test
-//    public void testChosenRoute_JSONInputBuild() throws Exception {
-//
-//    }
-
+    @Test
+    public void testChosenRouteInvalidInput() throws Exception {
+        TransferRequest invalidRequest = new TransferRequest(0, Arrays.asList
+            (
+                new Transfer(-5, 10),
+                new Transfer(10, -20)
+            )
+        );
+        mockMvc.perform(post("/api/transfers/inputRoutes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(invalidRequest)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.maxWeight").value("Maximum weight must be at least 1"))
+            .andExpect(jsonPath("$.availableTransfers[0].weight").value("Weight must be at least 1"))
+            .andExpect(jsonPath("$.availableTransfers[1].cost").value("Cost must be at least 0"));
+    }
 
 }

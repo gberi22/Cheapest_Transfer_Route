@@ -1,0 +1,7 @@
+{
+  "maxWeight": "not_a_number",
+  "availableTransfers": [
+    {"weight": -5, "cost": -10},
+    {"weight": "invalid_cost"}
+  ]
+}

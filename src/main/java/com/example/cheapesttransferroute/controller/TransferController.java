@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/transfers")
@@ -36,9 +38,9 @@ public class TransferController {
         }
         return ResponseEntity.ok(transferService.getMaximizedCostRoute());
     }
-
+  
     @PostMapping("/inputRoutes")
-    public ResponseEntity<Void> chosenRoute(@RequestBody TransferRequest request) {
+    public ResponseEntity<Void> chosenRoute(@Valid @RequestBody TransferRequest request) {
         logger.info("POST request received at /api/transfers/inputRoutes");
         transferManagerService.prepareService();
         transferManagerService.manageService(request);
