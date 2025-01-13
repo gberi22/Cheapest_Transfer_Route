@@ -1,10 +1,10 @@
-package com.example.cheapesttransferroute;
+package com.example.cheapesttransferroute.json;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class JSONTestUtils {
+public class JSONFileReader {
 
     public static String loadJSON(String fileName) throws IOException {
         return new String(Files.readAllBytes(Paths.get("src/test/resources/json/" + fileName)));

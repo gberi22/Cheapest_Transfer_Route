@@ -1,6 +1,6 @@
 package com.example.cheapesttransferroute.controller;
 
-import com.example.cheapesttransferroute.JSONTestUtils;
+import com.example.cheapesttransferroute.json.JSONFileReader;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,7 +24,7 @@ public class TestTransferControllerJSONInput {
 
     @Test
     public void testChosenRouteDefault() throws Exception {
-        String validRequestJSON = JSONTestUtils.loadJSON("valid_request.json");
+        String validRequestJSON = JSONFileReader.loadJSON("valid_request.json");
         mockMvc.perform(post("/api/transfers/inputRoutes")
             .contentType(MediaType.APPLICATION_JSON)
             .content(validRequestJSON))
@@ -33,7 +33,7 @@ public class TestTransferControllerJSONInput {
 
     @Test
     public void testGetMaximizedCostRouteDefault() throws Exception {
-        String validRequestJSON = JSONTestUtils.loadJSON("valid_request.json");
+        String validRequestJSON = JSONFileReader.loadJSON("valid_request.json");
         mockMvc.perform(post("/api/transfers/inputRoutes")
             .contentType(MediaType.APPLICATION_JSON)
             .content(validRequestJSON))
@@ -49,7 +49,7 @@ public class TestTransferControllerJSONInput {
 
     @Test
     public void testChosenRouteEmptyTransfers() throws Exception {
-        String emptyTransferJSON = JSONTestUtils.loadJSON("empty_transfers.json");
+        String emptyTransferJSON = JSONFileReader.loadJSON("empty_transfers.json");
         mockMvc.perform(post("/api/transfers/inputRoutes")
             .contentType(MediaType.APPLICATION_JSON)
             .content(emptyTransferJSON))
@@ -58,18 +58,31 @@ public class TestTransferControllerJSONInput {
     }
 
     @Test
-    void testPostInputRoutes_InvalidJson() throws Exception {
-        String invalidRequestJSON = JSONTestUtils.loadJSON("invalid_request.json");
+    void testPostInputRoutesJSONInvalidInp() throws Exception {
+        String invalidRequestJSON = JSONFileReader.loadJSON("invalid_request.json");
 
         mockMvc.perform(post("/api/transfers/inputRoutes")
             .contentType(MediaType.APPLICATION_JSON)
             .content(invalidRequestJSON))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.maxWeight").value("Invalid input format"))
-            .andExpect(jsonPath("$.availableTransfers[0].weight").value("Weight must be at least 1"))
+            .andExpect(jsonPath("$.error").value("Invalid input format"))
+            .andExpect(jsonPath("$.availableTransfers.[0].weight").value("Weight must be at least 1"))
             .andExpect(jsonPath("$.availableTransfers[0].cost").value("Cost must be at least 0"))
             .andExpect(jsonPath("$.availableTransfers[1].cost").value("Invalid input format"));
 
+    }
+
+    @Test
+    void testPostInputRoutesJSONOutBoundsInp() throws Exception {
+        String invalidRequestJSON = JSONFileReader.loadJSON("out_bounds.json");
+        mockMvc.perform(post("/api/transfers/inputRoutes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(invalidRequestJSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.maxWeight").value("Maximum weight must be at least 1"))
+            .andExpect(jsonPath("$.availableTransfers[0].weight").value("Weight must be at least 1"))
+            .andExpect(jsonPath("$.availableTransfers[0].cost").value("Cost must be at least 0"))
+            .andExpect(jsonPath("$.availableTransfers[1].weight").value("Weight must be at least 1"));
     }
 
 }

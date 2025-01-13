@@ -11,8 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.Collections;
 
-import static java.util.Collections.emptyList;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -77,7 +77,7 @@ public class TestTransferControllerJavaObjInput {
 
     @Test
     public void testChosenRouteEmptyTransfers() throws Exception {
-        TransferRequest request = new TransferRequest(15, emptyList());
+        TransferRequest request = new TransferRequest(15, Collections.emptyList());
         mockMvc.perform(post("/api/transfers/inputRoutes")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
@@ -85,8 +85,9 @@ public class TestTransferControllerJavaObjInput {
             .andExpect(jsonPath("$.availableTransfers").value("Available transfers list cannot be empty"));
     }
 
+
     @Test
-    public void testChosenRouteInvalidInput() throws Exception {
+    public void testChosenRouteOutBoundsInp() throws Exception {
         TransferRequest invalidRequest = new TransferRequest(0, Arrays.asList
             (
                 new Transfer(-5, 10),

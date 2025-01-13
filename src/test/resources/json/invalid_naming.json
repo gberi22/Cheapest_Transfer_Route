@@ -1,0 +1,9 @@
+{
+  "maximumWeight": 15,
+  "transfersGiven": [
+    {"waight": 5, "cosT": 10},
+    {"waight": 10, "cosT": 20},
+    {"waight": 3, "cosT": 5},
+    {"waight": 8, "cosT": 15}
+  ]
+}
