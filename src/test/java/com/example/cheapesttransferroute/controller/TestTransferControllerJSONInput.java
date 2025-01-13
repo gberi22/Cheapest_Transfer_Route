@@ -58,31 +58,66 @@ public class TestTransferControllerJSONInput {
     }
 
     @Test
-    void testPostInputRoutesJSONInvalidInp() throws Exception {
-        String invalidRequestJSON = JSONFileReader.loadJSON("invalid_request.json");
+    void testChosenRouteInvalidReqMaxWeightInp() throws Exception {
+        String invalidRequestJSON = JSONFileReader.loadJSON("max_weight_invalid_request.json");
 
         mockMvc.perform(post("/api/transfers/inputRoutes")
             .contentType(MediaType.APPLICATION_JSON)
             .content(invalidRequestJSON))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value("Invalid input format"))
-            .andExpect(jsonPath("$.availableTransfers.[0].weight").value("Weight must be at least 1"))
-            .andExpect(jsonPath("$.availableTransfers[0].cost").value("Cost must be at least 0"))
-            .andExpect(jsonPath("$.availableTransfers[1].cost").value("Invalid input format"));
-
+            .andExpect(jsonPath("$.maxWeight").value("Invalid format for field: maxWeight"));
     }
 
     @Test
-    void testPostInputRoutesJSONOutBoundsInp() throws Exception {
-        String invalidRequestJSON = JSONFileReader.loadJSON("out_bounds.json");
+    void testChosenRouteInvalidReqWeightInp() throws Exception {
+        String invalidRequestJSON = JSONFileReader.loadJSON("weight_invalid_request.json");
+
         mockMvc.perform(post("/api/transfers/inputRoutes")
             .contentType(MediaType.APPLICATION_JSON)
             .content(invalidRequestJSON))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.maxWeight").value("Maximum weight must be at least 1"))
-            .andExpect(jsonPath("$.availableTransfers[0].weight").value("Weight must be at least 1"))
-            .andExpect(jsonPath("$.availableTransfers[0].cost").value("Cost must be at least 0"))
-            .andExpect(jsonPath("$.availableTransfers[1].weight").value("Weight must be at least 1"));
+            .andExpect(jsonPath("$.weight").value("Invalid format for field: weight"));
+    }
+
+    @Test
+    void testChosenRouteInvalidReqCostInp() throws Exception {
+        String invalidRequestJSON = JSONFileReader.loadJSON("cost_invalid_request.json");
+
+        mockMvc.perform(post("/api/transfers/inputRoutes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(invalidRequestJSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.cost").value("Invalid format for field: cost"));
+    }
+
+    @Test
+    void testChosenRouteOutBoundsMaxWeightInp() throws Exception {
+        String invalidRequestJSON = JSONFileReader.loadJSON("max_weight_out_bounds.json");
+        mockMvc.perform(post("/api/transfers/inputRoutes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(invalidRequestJSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.maxWeight").value("Maximum weight must be at least 1"));
+    }
+
+    @Test
+    void testChosenRouteOutBoundsWeighttInp() throws Exception {
+        String invalidRequestJSON = JSONFileReader.loadJSON("weight_out_bounds.json");
+        mockMvc.perform(post("/api/transfers/inputRoutes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(invalidRequestJSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.weight").value("Weight must be at least 1"));
+    }
+
+    @Test
+    void testChosenRouteOutBoundsCostInp() throws Exception {
+        String invalidRequestJSON = JSONFileReader.loadJSON("cost_out_bounds.json");
+        mockMvc.perform(post("/api/transfers/inputRoutes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(invalidRequestJSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.cost").value("Cost must be at least 1"));
     }
 
 }

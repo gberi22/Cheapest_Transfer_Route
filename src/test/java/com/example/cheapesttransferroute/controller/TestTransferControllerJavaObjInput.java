@@ -87,10 +87,40 @@ public class TestTransferControllerJavaObjInput {
 
 
     @Test
-    public void testChosenRouteOutBoundsInp() throws Exception {
+    public void testChosenRouteOutBoundsMaxWeightInp() throws Exception {
         TransferRequest invalidRequest = new TransferRequest(0, Arrays.asList
             (
+                new Transfer(5, 10),
+                new Transfer(10, 20)
+            )
+        );
+        mockMvc.perform(post("/api/transfers/inputRoutes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(invalidRequest)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.maxWeight").value("Maximum weight must be at least 1"));
+    }
+
+    @Test
+    public void testChosenRouteOutBoundsWeightInp() throws Exception {
+        TransferRequest invalidRequest = new TransferRequest(10, Arrays.asList
+            (
                 new Transfer(-5, 10),
+                new Transfer(10, 20)
+            )
+        );
+        mockMvc.perform(post("/api/transfers/inputRoutes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(invalidRequest)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.weight").value("Weight must be at least 1"));
+    }
+
+    @Test
+    public void testChosenRouteOutBoundsCostInp() throws Exception {
+        TransferRequest invalidRequest = new TransferRequest(10, Arrays.asList
+            (
+                new Transfer(5, 10),
                 new Transfer(10, -20)
             )
         );
@@ -98,9 +128,7 @@ public class TestTransferControllerJavaObjInput {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(invalidRequest)))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.maxWeight").value("Maximum weight must be at least 1"))
-            .andExpect(jsonPath("$.availableTransfers[0].weight").value("Weight must be at least 1"))
-            .andExpect(jsonPath("$.availableTransfers[1].cost").value("Cost must be at least 0"));
+            .andExpect(jsonPath("$.cost").value("Cost must be at least 1"));
     }
 
 }
