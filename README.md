@@ -20,7 +20,7 @@ cd <repository-folder>
 Use Maven to build the project:
 
 ```bash
-mvn clean install
+mvn clean validate install
 ```
 
 ### 3. Run the Application
@@ -119,7 +119,7 @@ curl -X POST \
 ### 2. Fetching the Route (GET)
 
 ```bash
-curl -X GET http://localhost:8000/api/transfers/getRoute
+curl -i -X GET http://localhost:8000/api/transfers/getRoute
 ```
 
 ---
