@@ -12,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
+/**
+ * Controller class for handling transfer-related API endpoints.
+ */
 @RestController
 @RequestMapping("/api/transfers")
 public class TransferController {
@@ -23,6 +25,13 @@ public class TransferController {
     private final TransferManagerService transferManagerService;
     private final ValidationInputService validationInputService;
 
+    /**
+     * Constructor for dependency injection of services
+     *
+     * @param transferService service for transfer operations
+     * @param transferManagerService service for managing transfers
+     * @param validationInputService service for validating input requests
+     */
     @Autowired
     public TransferController(TransferService transferService, TransferManagerService transferManagerService, ValidationInputService validationInputService) {
         this.transferService = transferService;
@@ -30,6 +39,11 @@ public class TransferController {
         this.validationInputService = validationInputService;
     }
 
+    /**
+     * Endpoint to retrieve the route with maximized cost
+     *
+     * @return ResponseEntity containing the route result or a NOT_FOUND status if no transfers are available
+     */
     @GetMapping("/getRoute")
     public ResponseEntity<RouteResult> getMaximizedCostRoute() {
         logger.info("GET request received at /api/transfers/getRoute");
@@ -39,7 +53,13 @@ public class TransferController {
         }
         return ResponseEntity.ok(transferService.getMaximizedCostRoute());
     }
-  
+
+    /**
+     * Endpoint to process and manage a chosen route based on the provided request
+     *
+     * @param request client given request containing route details
+     * @return ResponseEntity with an OK status if request is valid
+     */
     @PostMapping("/inputRoutes")
     public ResponseEntity<Void> chosenRoute(@RequestBody TransferRequest request) {
         logger.info("POST request received at /api/transfers/inputRoutes");

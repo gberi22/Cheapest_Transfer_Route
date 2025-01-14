@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Service implementation for managing transfer operations
+ */
 @Service
 public class TransferServiceImpl implements TransferService {
 
@@ -19,6 +22,12 @@ public class TransferServiceImpl implements TransferService {
         this.transferRepository = transferRepository;
     }
 
+    /**
+     * Finds the combination of transfers that maximizes the total
+     * cost while ensuring the total weight of the transfers is less
+     * than or equal to maxWeight
+     * @return result of the final route containing selected list of transfers, total cost and total weight.
+     */
     @Override
     public RouteResult getMaximizedCostRoute() {
         List<Transfer> list = transferRepository.getTransfers();
@@ -28,12 +37,16 @@ public class TransferServiceImpl implements TransferService {
 
     /**
      * This logic requires dp algorithm. dp array tracks maximum cost for each weight from 0 to maxWeight
-     * 1. We must consider each Transfer one by one
-     * 2. For each transfer, update dp array but in reverse order to be sure we don't use same transfer multiple times
-     * 3. dp must be 2D array, so I can keep my eyes on which transfers dp chose.
-     * 4. after dp is filled, I need to take out the information to return final route information
+     * 1. Consider each Transfer one by one
+     * 2. For each transfer, update dp array but in reverse order to avoid usage of same transfer multiple times
+     * 3. dp must be 2D array, to keep track on which transfers dp chooses.
+     * 4. after dp is filled, the information must be taken out to return final route information
      * 5. Backtracking to find out which transfers were chosen.
-     * 6. When I find the route weight is easily computable
+     * 6. When the route is found, weight and cost are easily computable
+     *
+     * @param maxWeight the maximum allowable weight for the route
+     * @param allTransfers the list of all available transfers
+     * @return RouteResult containing the selected transfers, total cost, and total weight
      */
     private RouteResult findMaximizedCostRoute(int maxWeight, List<Transfer> allTransfers) {
         int quantityOfTransfers = allTransfers.size();

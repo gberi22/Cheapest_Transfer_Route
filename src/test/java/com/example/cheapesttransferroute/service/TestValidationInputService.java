@@ -35,7 +35,7 @@ public class  TestValidationInputService {
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> validationInputService.validateTransferRequest(invalidRequest));
-        assert exception.getMessage().equals("Maximum weight must be an integer and at least 1");
+        assert exception.getMessage().equals("Maximum weight must be at least 1");
     }
 
     @Test
@@ -54,7 +54,7 @@ public class  TestValidationInputService {
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> validationInputService.validateTransferRequest(invalidRequest));
-        assert exception.getMessage().equals("Weight must be an integer and at least 1");
+        assert exception.getMessage().equals("Weight must be at least 1");
     }
 
     @Test
@@ -64,6 +64,6 @@ public class  TestValidationInputService {
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> validationInputService.validateTransferRequest(invalidRequest));
-        assert exception.getMessage().equals("Cost must be an integer and at least 1");
+        assert exception.getMessage().equals("Cost must be at least 1");
     }
 }

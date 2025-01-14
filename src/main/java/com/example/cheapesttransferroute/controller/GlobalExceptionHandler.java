@@ -10,11 +10,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Controller class  for global exception handling
+ * to provide consistent error responses for the application.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
-
+    /**
+     * Handles exceptions caused by unreadable HTTP messages (e.g., invalid JSON input).
+     *
+     * @param ex the exception thrown when the HTTP message is not readable
+     * @return a response entity with error details and a BAD_REQUEST status
+     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, String>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         Map<String, String> errorResponse = new HashMap<>();
@@ -33,6 +41,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    /**
+     * Handles IllegalArgumentException, typically thrown for invalid method arguments.
+     *
+     * @param ex the exception thrown for illegal arguments
+     * @return a response entity with error details and a BAD_REQUEST status
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
         Map<String, String> errorResponse = new HashMap<>();
@@ -44,6 +58,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    /**
+     * Determines the error key based on the exception message content.
+     *
+     * @param errorMessage the exception message
+     * @return a specific error key or a default key
+     */
     private String determineErrorKey(String errorMessage) {
         if (errorMessage.contains("Maximum weight")) {
             return "maxWeight";
