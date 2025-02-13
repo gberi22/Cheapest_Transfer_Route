@@ -30,9 +30,23 @@ public class TransferServiceImpl implements TransferService {
      */
     @Override
     public RouteResult getMaximizedCostRoute() {
-        List<Transfer> list = transferRepository.getTransfers();
+        List<Transfer> tmp = transferRepository.getTransfers();
+
+        // copy transfers from repository
+        List<Transfer> list = new ArrayList<>(tmp);
+
         int maxWeight = transferRepository.getMaxWeight();
-        return findMaximizedCostRoute(maxWeight, list);
+        RouteResult ans = findMaximizedCostRoute(maxWeight, list);
+        List<Transfer> usedTransfers = ans.getSelectedTransfers();
+
+        transferRepository.clearTransfers();
+        for (Transfer tr : list) {
+            if (!usedTransfers.contains(tr)) {
+                transferRepository.addTransfer(tr);
+            }
+        }
+
+        return ans;
     }
 
     /**
@@ -80,6 +94,7 @@ public class TransferServiceImpl implements TransferService {
         }
 
         Collections.reverse(selectedTransfers);
+
 
         return new RouteResult(selectedTransfers, totalCost, totalWeight);
     }

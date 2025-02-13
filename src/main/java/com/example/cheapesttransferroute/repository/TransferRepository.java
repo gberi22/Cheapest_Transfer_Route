@@ -38,7 +38,11 @@ public class TransferRepository {
      * Clears all the repository information
      */
     public void clearRepositoryInformation() {
-        transfers.clear();
         this.maxWeight = 0;
     }
+
+    public void clearTransfers() {
+        transfers.clear();
+    }
+
 }

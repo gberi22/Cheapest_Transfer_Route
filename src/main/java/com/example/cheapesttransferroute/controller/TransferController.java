@@ -44,7 +44,7 @@ public class TransferController {
      *
      * @return ResponseEntity containing the route result or a NOT_FOUND status if no transfers are available
      */
-    @GetMapping("/getRoute")
+    @GetMapping("/getRoutes")
     public ResponseEntity<RouteResult> getMaximizedCostRoute() {
         logger.info("GET request received at /api/transfers/getRoute");
         if (transferManagerService.isAvailableTransfersEmpty()){
